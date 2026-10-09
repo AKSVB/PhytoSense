@@ -2,7 +2,7 @@
 
 ## Project
 
-Low-cost stomatal phenotyping: smartphone + clip-on 200x lens (APEXEL 200X) for imaging, a Python package `phytosense` for calibration, QC, detection and trait statistics. The owner works at BIAM (CEA Cadarache) and has access to many species (Arabidopsis, Citrus, tomato, hemp and others) and to light, digital, confocal and other microscopes for validation.
+Low-cost stomatal phenotyping: smartphone + clip-on 200x lens (APEXEL 200X) for imaging, a Python package `phytosense` for calibration, QC, detection and trait statistics. Independent personal project (not a CEA or BIAM project). The owner has access to many species (Arabidopsis, Citrus, tomato, hemp and others) and to light, digital, confocal and other microscopes for validation.
 
 ## Current state (v0.1)
 
@@ -14,7 +14,7 @@ Low-cost stomatal phenotyping: smartphone + clip-on 200x lens (APEXEL 200X) for 
 
 - Python core first; mobile app later (on-device model via TFLite/ONNX).
 - Validation uses nail-polish impressions so the same field can be imaged on the phone and on reference microscopes.
-- No licence chosen yet. IP ownership must be checked with CEA's technology transfer office before publishing or commercialising (work done with CEA resources).
+- No licence chosen yet. The project is developed independently by the owner; no CEA involvement or IP check needed.
 - Patent US 11988509 B2 (Inari Agriculture) claims multi-focal-distance image capture + composite image + trainable detector for stomata count/density. Do not add focus stacking without a freedom-to-operate check.
 
 ## Competitor: MIAtecs (miatecs.com)

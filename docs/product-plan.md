@@ -59,7 +59,7 @@ Ordered by priority. "Catch up" closes a gap with MIAtecs; "Differentiate" is so
 
 ### Priority 1: needed before anyone can use it on real leaves
 
-1. **Trained detector on real images** (catch up). Annotate APEXEL images from several BIAM species and train the YOLO oriented-box model. MIAtecs' strongest point is that their detection works per species; ours has only been tested on synthetic images.
+1. **Trained detector on real images** (catch up). Annotate APEXEL images from several species and train the YOLO oriented-box model. MIAtecs' strongest point is that their detection works per species; ours has only been tested on synthetic images.
 2. **Guard cell length, width and aperture** (catch up). Take size from the oriented box, and aperture from pore segmentation only where the measured resolution allows it. Report "not resolvable" rather than a number when it does not.
 3. **Per-image QC status with a reject rule** (catch up). Turn the existing focus and exposure metrics into pass/warn/reject, plus a per-detection blur flag that excludes stomata, like their 30% rule.
 4. **Overlay images for review** (catch up). Save an annotated image for every analysed image, with detections and excluded regions.
@@ -80,7 +80,7 @@ Ordered by priority. "Catch up" closes a gap with MIAtecs; "Differentiate" is so
 13. **Trichomes** (catch up). Density, length and clustering, using the same detector framework with a new class.
 14. **Venation and areoles** (catch up). Vein length density and areole size. This probably needs lower magnification or cleared leaves, so first check what the clip-on lens can resolve.
 15. **Climate context** (catch up). Pull VPD, GDD and rainfall for the site and date from a public weather API (for example Open-Meteo) and join them to the trait table.
-16. **Ploidy pre-screen** (catch up, and they have not launched it). Guard cell length vs ploidy calibration curves per species, checked against flow cytometry. BIAM's species collection makes this a realistic early target.
+16. **Ploidy pre-screen** (catch up, and they have not launched it). Guard cell length vs ploidy calibration curves per species, checked against flow cytometry. The owner's access to many species makes this a realistic early target.
 17. **Time series on one leaf** (partial catch up with PHENOM). Track the same stomata across a phone time lapse in the clamp. This will not match a bench microscope's resolution, but it may be enough for open/closed status.
 18. **BrAPI export and audit trail** (differentiate). Useful for breeding programs that already run a BrAPI database.
 
@@ -92,6 +92,6 @@ Ordered by priority. "Catch up" closes a gap with MIAtecs; "Differentiate" is so
 
 ## Open questions
 
-- IP ownership and licence: check with CEA's technology transfer office before publishing code or a paper.
+- Licence: choose one before wider release (for example MIT or GPL for the code, CC BY for docs).
 - The clip-on lens resolution limit for aperture and venation: measure it on a micrometer and on nail polish impressions before promising those traits.
 - Whether MIAtecs' Apexel-based kit and our hardware are close enough that their claims set user expectations for us.
