@@ -10,3 +10,7 @@ results*/
 runs/
 *.pt
 data/
+
+# Local data and outputs (not for the public repo)
+Training_data/
+runs/

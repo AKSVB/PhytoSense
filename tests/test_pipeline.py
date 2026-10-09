@@ -145,3 +145,20 @@ def test_points_csv_and_cli(tmp_path):
                "--name", "phoneA", "--profiles", str(prof)])
     assert rc == 0
     assert math.isclose(calib.load_profiles(prof)["phoneA"].um_per_px, 0.5, rel_tol=0.02)
+
+
+def test_pale_spot_detector_finds_pale_disks_on_green():
+    from phytosense.detect import PaleSpotDetector
+
+    rng = np.random.default_rng(1)
+    h = w = 600
+    img = np.zeros((h, w, 3))
+    img[..., 0], img[..., 1], img[..., 2] = 0.25, 0.6, 0.2
+    img += rng.normal(0, 0.03, img.shape)
+    yy, xx = np.mgrid[:h, :w]
+    centres = [(y, x) for y in range(80, 560, 100) for x in range(80, 560, 100)]
+    for cy, cx in centres:
+        d = (yy - cy) ** 2 + (xx - cx) ** 2 < 15 ** 2
+        img[d] = [0.75, 0.85, 0.75]
+    dets = PaleSpotDetector(36).detect(np.clip(img, 0, 1))
+    assert abs(len(dets) - len(centres)) <= 2

@@ -164,6 +164,73 @@ class BlobDetector:
         return filter_by_mask(dets, mask)
 
 
+def paleness(img: np.ndarray) -> np.ndarray:
+    """Map an RGB image to [0, 1], high where pixels are pale (bright and unsaturated).
+
+    On clip-on phone images of green leaves, stomata appear as whitish rings on
+    a green background, so paleness separates them from pavement cells better
+    than brightness does. Gray input is returned as gray.
+    """
+    a = np.asarray(img)
+    if a.ndim == 2:
+        return to_gray(a)
+    a = a[..., :3].astype(np.float64)
+    if a.max() > 1.0:
+        a = a / 255.0
+    mx, mn = a.max(-1), a.min(-1)
+    sat = (mx - mn) / (mx + 1e-6)
+    return 0.5 * (1.0 - sat) + 0.5 * mn
+
+
+class PaleSpotDetector:
+    """Detects stomata as pale spots of the expected size, for colour phone images.
+
+    Band-pass filters the paleness map at the stoma scale, normalises contrast
+    locally (so dark oil glands or uneven lighting do not shift the threshold),
+    and keeps local maxima above ``threshold`` local standard deviations.
+    Needs no training data; intended as a baseline and pre-annotation tool.
+    """
+
+    def __init__(self, stoma_length_px: float, threshold: float = 1.0, min_sep_frac: float = 0.65) -> None:
+        if stoma_length_px < 6:
+            raise ValueError("Stomata smaller than ~6 px cannot be resolved; increase magnification")
+        self.L = float(stoma_length_px)
+        self.threshold = threshold
+        self.min_sep = max(2, int(min_sep_frac * self.L))
+
+    def detect(self, img: np.ndarray, mask: np.ndarray | None = None) -> list[Detection]:
+        from scipy import ndimage as ndi
+        from skimage.feature import peak_local_max
+
+        p = paleness(img)
+        if mask is not None:
+            p = np.where(mask, p, np.median(p[mask]))
+        sig = self.L / 4.0
+        band = ndi.gaussian_filter(p, sig) - ndi.gaussian_filter(p, 4 * sig)
+        win = 8 * sig
+        m = ndi.gaussian_filter(band, win)
+        sd = np.sqrt(np.maximum(ndi.gaussian_filter(band * band, win) - m * m, 1e-12))
+        z = (band - m) / sd
+        peaks = peak_local_max(z, min_distance=self.min_sep, threshold_abs=self.threshold,
+                               exclude_border=self.min_sep)
+        # Drop peaks inside large dark regions such as oil glands, where local
+        # normalisation amplifies noise.
+        coarse = ndi.gaussian_filter(p, self.L)
+        med = np.median(coarse)
+        mad = 1.4826 * np.median(np.abs(coarse - med)) + 1e-9
+        peaks = [(y, x) for y, x in peaks if coarse[y, x] > med - 2.5 * mad]
+        half = int(math.ceil(0.75 * self.L))
+        h, w = p.shape
+        dets = []
+        for y, x in peaks:
+            r0, r1 = max(0, y - half), min(h, y + half + 1)
+            c0, c1 = max(0, x - half), min(w, x + half + 1)
+            length, width, angle = _moments_shape(np.clip(band[r0:r1, c0:c1], 0, None))
+            dets.append(Detection(x=float(x), y=float(y), length_px=length, width_px=width,
+                                  angle_deg=angle, score=float(z[y, x]), source="pale"))
+        return filter_by_mask(dets, mask)
+
+
 class YoloDetector:
     """Detector backed by an Ultralytics YOLO model (axis-aligned or oriented boxes).
 

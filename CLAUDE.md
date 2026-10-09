@@ -32,7 +32,7 @@ Marseille, founded early 2024 by Fabien Miart. Products: STOMmini (portable smar
 ## Next steps
 
 1. Done: MIAtecs review and gap list in `docs/product-plan.md` (2026-10-09).
-2. Run the pipeline on real APEXEL images + a micrometer photo; tune the blob detector; start annotation for YOLO.
+2. First real images: 8 Citrus photos (2026-10-09) in Training_data/ (git-ignored). Added PaleSpotDetector (`--detector pale --stoma-length-px N`), which works on them; zoom varied between photos, so stoma size was set per photo. Still needed: micrometer photo at a fixed zoom, a blur reject rule (photo 141653 is mostly out of focus), start YOLO annotation using pale detections as pre-annotations.
 3. Design the leaf clamp with built-in calibration scale.
 
 ## Conventions

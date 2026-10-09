@@ -12,8 +12,8 @@ import numpy as np
 
 from . import calibration as calib
 from .analysis import analyze
-from .detect import BlobDetector, read_points_csv, write_detections_csv
-from .imageio import load_gray, save_gray
+from .detect import BlobDetector, PaleSpotDetector, read_points_csv, write_detections_csv
+from .imageio import load_gray, load_rgb, save_gray
 from .quality import field_mask
 from .report import overlay, write_results
 from .validation import agreement, match_points
@@ -67,6 +67,9 @@ def cmd_analyze(a) -> int:
         from .detect import YoloDetector
 
         detector = YoloDetector(a.yolo, conf=a.conf)
+    elif a.detector == "pale" and not a.points_dir:
+        L = a.stoma_length_px or cal.um_to_px(a.stoma_length_um)
+        detector = PaleSpotDetector(L, threshold=a.threshold)
     elif not a.points_dir:
         detector = BlobDetector(
             cal.um_to_px(a.stoma_length_um), polarity=a.polarity, threshold_rel=a.threshold
@@ -86,6 +89,8 @@ def cmd_analyze(a) -> int:
                 print(f"skip {p.name}: no {csv_path}", file=sys.stderr)
                 continue
             dets = read_points_csv(csv_path, scale=a.points_scale)
+        elif isinstance(detector, PaleSpotDetector):
+            dets = detector.detect(load_rgb(p), mask)
         res = analyze(img, cal, detections=dets, detector=detector, mask=mask,
                       contact_factor=a.contact_factor, contact_dist_um=a.contact_dist_um,
                       image_name=p.name)
@@ -184,8 +189,13 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--um-per-px", type=float, help="use this scale instead of a saved profile")
     sp.add_argument("--stoma-length-um", type=float, default=25.0,
                     help="expected stomatal complex length for the blob detector")
+    sp.add_argument("--detector", choices=["blob", "pale"], default="blob",
+                    help="blob: gray LoG blobs; pale: pale spots on colour images (clip-on phone photos)")
+    sp.add_argument("--stoma-length-px", type=float,
+                    help="expected stoma length in pixels (overrides --stoma-length-um)")
     sp.add_argument("--polarity", choices=["dark", "bright", "auto"], default="dark")
-    sp.add_argument("--threshold", type=float, default=0.2)
+    sp.add_argument("--threshold", type=float, default=0.2,
+                    help="blob: relative LoG threshold; pale: local z-score (try 1.0)")
     sp.add_argument("--yolo", help="path to trained YOLO weights")
     sp.add_argument("--conf", type=float, default=0.25)
     sp.add_argument("--points-dir", help="folder of manual point CSVs named <image-stem>.csv")
