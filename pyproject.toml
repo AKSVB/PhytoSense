@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phytosense"
+version = "0.1.0"
+description = "Stomatal phenotyping from smartphone clip-on microscope images"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-image>=0.21",
+    "pillow>=10",
+]
+
+[project.optional-dependencies]
+# Trained detector (YOLO). Not needed for calibration, QC, manual points or statistics.
+yolo = ["ultralytics>=8.2"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+phytosense = "phytosense.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

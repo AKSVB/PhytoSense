@@ -1,0 +1,12 @@
+__pycache__/
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+phytosense_out/
+phytosense_demo/
+demo/
+results*/
+runs/
+*.pt
+data/

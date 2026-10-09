@@ -1,0 +1,2 @@
+image,species,genotype,treatment,plant_id,leaf_position,side,field,prep,illumination,calibration_profile,operator,date,notes
+arabidopsis_col0_P03_L07_abx_F2.jpg,Arabidopsis thaliana,Col-0,control,P03,7,abaxial,2,impression,transmitted,pixel7-apexel200-1x,,2026-10-09,
