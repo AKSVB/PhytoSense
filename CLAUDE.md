@@ -31,7 +31,7 @@ Marseille, founded early 2024 by Fabien Miart. Products: STOMmini (portable smar
 
 ## Next steps
 
-1. Review the MIAtecs website and write `docs/product-plan.md`.
+1. Done: MIAtecs review and gap list in `docs/product-plan.md` (2026-10-09).
 2. Run the pipeline on real APEXEL images + a micrometer photo; tune the blob detector; start annotation for YOLO.
 3. Design the leaf clamp with built-in calibration scale.
 
